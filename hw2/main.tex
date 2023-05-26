@@ -154,15 +154,6 @@ The attack vector is a lack of authentication and missing access control. The
 server allows queries to an administrative endpoint for unauthenticated users,
 and blindly executes those queries without any form of permission validation.
 
-Potentially applicable OWASP categories are:
-\begin{enumerate}
-  \item \texttt{A07:2021} -- Identification and Authentication Failures%\footnote{\url{https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/}}
-  \item \texttt{A01:2021} -- Broken Access Control%\footnote{\url{https://owasp.org/Top10/A01_2021-Broken_Access_Control/}}
-  \item \texttt{A04:2021} -- Insecure Design%\footnote{\url{https://owasp.org/Top10/A04_2021-Insecure_Design/}}
-\end{enumerate}
-
-\textbf{Proof of Concept.}
-
 The function \texttt{admin\_get()} in the source code file \texttt{main.py}
 contains the logic for managing the administrative privileges of user accounts.
 The function's source code is shown in \figref{fig:code:adminset}.
@@ -173,6 +164,15 @@ The function's source code is shown in \figref{fig:code:adminset}.
     \caption{Privilege management without authentication and authorisation}
     \label{fig:code:adminset}
 \end{figure}
+
+Potentially applicable OWASP categories are:
+\begin{enumerate}
+  \item \texttt{A07:2021} -- Identification and Authentication Failures%\footnote{\url{https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/}}
+  \item \texttt{A01:2021} -- Broken Access Control%\footnote{\url{https://owasp.org/Top10/A01_2021-Broken_Access_Control/}}
+  \item \texttt{A04:2021} -- Insecure Design%\footnote{\url{https://owasp.org/Top10/A04_2021-Insecure_Design/}}
+\end{enumerate}
+
+\textbf{Proof of Concept.}
 
 To exploit the vulnerability, one may simply make a \texttt{GET} request to
 \begin{verbatim}
