@@ -35,17 +35,24 @@
 
 \begin{document}
 
-{\LARGE \textbf{\textsf{Vulnerability Report}}}
+{\LARGE \textbf{\textsf{Vulnerability Report (HW2)}}}
 \vspace*{1em}
 
-\textbf{Date:} \today
+\textbf{Date:} 2023-05-25
 
 \textbf{Author:} \docauthor
 
 \textbf{Student code:} \texttt{\studentcode}
 
-Note: the actual student code is not present in the web application database.
-I have assumed the student code \texttt{C18947} for this task.
+Notes:
+\begin{enumerate}
+    \item The actual student code is not present in the web application
+    database. I have assumed the student code \texttt{C18947} for this task.
+    \item I do not reproach HTTP availability in this report, since this is
+    (I assume) for operational convenience.
+\end{enumerate}
+
+This report has $8$ pages.
 
 \section*{Vulnerability 1}\label{vuln1}
 
@@ -65,20 +72,12 @@ user, and can then access some administrative page without actual
 administrative privileges. The attacker can do this by brute-forcing/guessing
 some names, however the attack is trivial with access to source code.
 
-Potentially applicable OWASP categories are:
-\begin{enumerate}
-  \item \texttt{A01:2021} -- Broken Access Control%\footnote{\url{https://owasp.org/Top10/A01_2021-Broken_Access_Control/}}
-  \item \texttt{A04:2021} -- Insecure Design%\footnote{\url{https://owasp.org/Top10/A04_2021-Insecure_Design/}}
-\end{enumerate}
-
-\textbf{Proof of Concept.}
-
 The function \texttt{admin()} in the source code file \texttt{main.py} contains
 part of the flawed logic. Particularly, line $25$ contains the flawed
 permission logic, where access is evaluated based on the account's name.
 The function's source code is shown in \figref{fig:code:admincomp}.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{code_admincomp}
     \caption{Name-based access control}
@@ -90,14 +89,22 @@ Because there is nothing preventing a user from creating an account with name
 creation is handled by the function \texttt{signup\_post()} in the file
 \texttt{auth.py}, and is shown in \figref{fig:code:signup}.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{code_acccreate}
     \caption{Account signup with lacking validation}
     \label{fig:code:signup}
 \end{figure}
 
-Therefore, exploitation is carried out in three steps:
+Potentially applicable OWASP categories are:
+\begin{enumerate}
+  \item \texttt{A01:2021} -- Broken Access Control%\footnote{\url{https://owasp.org/Top10/A01_2021-Broken_Access_Control/}}
+  \item \texttt{A04:2021} -- Insecure Design%\footnote{\url{https://owasp.org/Top10/A04_2021-Insecure_Design/}}
+\end{enumerate}
+
+\textbf{Proof of Concept.}
+
+Exploitation is carried out in three steps:
 \begin{enumerate}
     \item register a user account with name ``admin'' (\figref{fig:sigadm}),
     \item log-in with this user account,
@@ -105,14 +112,14 @@ Therefore, exploitation is carried out in three steps:
     (\figref{fig:viewadm}).
 \end{enumerate}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{signup_admin}
     \caption{Sign up with name ``admin''}
     \label{fig:sigadm}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{view_admin}
     \caption{View all user accounts}
@@ -129,6 +136,7 @@ For the given source code, the check on line $25$ should be replaced with
 current_user.isadmin == 1
 \end{verbatim}
 
+\clearpage
 \newpage
 
 \section*{Vulnerability 2}
@@ -159,7 +167,7 @@ The function \texttt{admin\_get()} in the source code file \texttt{main.py}
 contains the logic for managing the administrative privileges of user accounts.
 The function's source code is shown in \figref{fig:code:adminset}.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{code_adminset}
     \caption{Privilege management without authentication and authorisation}
@@ -178,14 +186,14 @@ For example, consider the regular user with email \texttt{\email}. This user
 can view user grades (\figref{fig:grades:view}) but cannot change these
 grades (\figref{fig:grades:failupdate}).
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{view_grade}
     \caption{Initial grades view}
     \label{fig:grades:view}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{forbidden_grade}
     \caption{Unauthorised grade modification}
@@ -196,14 +204,14 @@ However, with a \texttt{GET} request to the \texttt{/set-admin} endpoint
 (\figref{fig:setadmin}) the user is given administrative privileges, and the
 user can subsequently update grades (\figref{fig:grades:update}).
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{set_admin}
     \caption{Permission elevation}
     \label{fig:setadmin}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{view_new_grade}
     \caption{Authorised grade modification}
@@ -228,6 +236,7 @@ current_user.isadmin == 1
 
 % Do not allow GET requests to change the system state.
 
+\clearpage
 \newpage
 
 \section*{Vulnerability 3}
@@ -253,14 +262,14 @@ submitting data to the server endpoint directly. \figref{fig:grades:absurd}
 shows the submission of ridiculous data, while \figref{fig:grades:bound} shows
 that values are validated on the client-side.
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{absurd_grade}
     \caption{Lack of server side grade validation}
     \label{fig:grades:absurd}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=200pt]{value_bound}
     \caption{Client side grade validation}
